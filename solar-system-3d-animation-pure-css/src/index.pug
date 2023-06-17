@@ -1,0 +1,57 @@
+mixin structure()
+  each val in [1, 2, 3, 4, 5, 6]
+    div(class="planet__structure planet__structure--" + val)
+  
+  
+mixin planet(planetname)
+  div(class=planetname + "-orbit sun-orbit")
+    div(class="ascending-node ascending-node--" + planetname)
+      div(class="inclination inclination--" + planetname)
+        .orbit__visual
+        div(class="orbit__shape orbit__shape--" + planetname)
+          div(class="planet " + planetname)
+            +structure
+          block
+          
+input(type="radio" id="correct-orbit-size" name="orbit-size")
+input(type="radio" id="ideal-orbit-size" name="orbit-size" checked)
+input(type="radio" id="real-time" name="velocity")
+input(type="radio" id="one-year-per-minute" name="velocity" checked)
+input(type="radio" id="one-year-per-second" name="velocity")
+input(type="radio" id="topview" name="perspective")
+input(type="radio" id="isometric" name="perspective")
+input(type="radio" id="threedee" name="perspective" checked)
+.universe
+  .solarsystem
+    .sun
+      +structure
+    +planet("mercury")
+    +planet("venus")
+    +planet("earth")
+    +planet("mars")
+    +planet("jupiter")
+    +planet("saturn")
+      .planet-orbit.planet-orbit--saturn
+        .rings-of-saturn 
+    +planet("uranus") 
+    +planet("neptun")
+
+.content
+  h1 The Solar System
+  .controls
+    .controls__group
+      span Orbit Size:
+      label(for="correct-orbit-size" class="button correct-size") Correct
+      label(for="ideal-orbit-size" class="button ideal-size") Idealized
+      
+    .controls__group
+      span Velocity:
+      label(for="real-time" class="button real-time") Realtime
+      label(for="one-year-per-minute" class="button one-year-per-minute") 1 Year / Min
+      label(for="one-year-per-second" class="button one-year-per-second") 1 Year / Sec
+      
+    .controls__group
+      span Perspective:
+      label(for="threedee" class="button threedee") 3d
+      label(for="topview" class="button topview") Top
+      label(for="isometric" class="button isometric") Isometric
