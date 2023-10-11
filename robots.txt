@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /root
+Disallow: /PGPKEY
+Disallow: /logs.txt
+Disallow: /lol.txt
+User-agent: *
+Allow: /Z403
