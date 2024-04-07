@@ -1,0 +1,180 @@
+🔥 PATH TRAVERSAL 🔥
+
+#READING ARBITARY FILES VIA PATH TRAVERSAL
+Imagine a shopping application that displays images of items for sale. This might load an image using the following HTML:
+<img src="/loadimage?filename=218.png">
+
+actually= /var/www/images/218.png
+
+let's see contents of /etc/passwd
+
+https://insecure-website.com/loadimage?filename=../../../etc/passwd
+actually = /var/www/images/../../../etc/passwd
+
+
+Windows based server attack
+https://insecure-website.com/loadImage?filename=..\..\..\windows\win.ini
+
+
+#Common obstacles to exploiting path traversal vulnerabilities
+
+*Many applications that place user input into file paths implement defenses against path traversal attacks. These can often be bypassed.
+    If an application strips or blocks directory traversal sequences from the user-supplied filename, it might be possible to bypass the defense using a variety of techniques.
+
+*You might be able to use an absolute path from the filesystem root, such as filename=/etc/passwd, to directly reference a file without using any traversal sequences.
+*You might be able to use nested traversal sequences, such as ....// or ....\/. These revert to simple traversal sequences when the inner sequence is stripped.
+
+/image?filename=....//....//....//etc/passwd
+..%2F..%2F..%2Fetc%2Fpasswd
+..%252f..%252f..%252fetc/passwd
+filename=/var/www/images/../../../etc/passwd
+filename=../../../etc/passwd%00.png.
+
+
+In some contexts, such as in a URL path or the filename parameter of a multipart/form-data request, web servers may strip any directory traversal sequences before passing your input to the application. You can sometimes bypass this kind of sanitization by URL encoding, or even double URL encoding, the ../ characters.
+ This results in %2e%2e%2f and %252e%252e%252f respectively. Various non-standard encodings, such as ..%c0%af or ..%ef%bc%8f, may also work.
+For Burp Suite Professional users, Burp Intruder provides the predefined payload list Fuzzing - path traversal. This contains some encoded path traversal sequences that you can try.
+
+An application may require the user-supplied filename to start with the expected base folder, such as /var/www/images. In this case, it might be possible to include the required base folder followed by suitable traversal sequences. For example:
+filename=/var/www/images/../../../etc/passwd
+
+An application may require the user-supplied filename to end with an expected file extension, such as .png. In this case, it might be possible to use a null byte to effectively terminate the file path before the required extension. For example:
+filename=../../../etc/passwd%00.png
+
+How to prevent a path traversal attack
+The most effective way to prevent path traversal vulnerabilities is to avoid passing user-supplied input to filesystem APIs altogether. Many application functions that do this can be rewritten to deliver the same behavior in a safer way.
+
+If you can't avoid passing user-supplied input to filesystem APIs, we recommend using two layers of defense to prevent attacks:
+
+Validate the user input before processing it. Ideally, compare the user input with a whitelist of permitted values. If that isn't possible, verify that the input contains only permitted content, such as alphanumeric characters only.
+After validating the supplied input, append the input to the base directory and use a platform filesystem API to canonicalize the path. Verify that the canonicalized path starts with the expected base directory.
+Below is an example of some simple Java code to validate the canonical path of a file based on user input:
+
+File file = new File(BASE_DIRECTORY, userInput);
+if (file.getCanonicalPath().startsWith(BASE_DIRECTORY)) {
+    // process file
+}   
+
+
+🔥 SERVER SIDE 🔥
+
+1. Path traversel
+2. Access control
+        * Authentication : confirms that the user is who they say they are.
+        * Session management : identifies which subsequent HTTP requests are being made by that same user.
+        * Access control : determines whether the user is allowed to carry out the action that they are attempting to perform.
+
+        #Vertical privilege escalation
+        If a user can gain access to functionality that they are not permitted to access then this is vertical privilege 
+        escalation. For example, if a non-administrative user can gain access to an admin page where they can delete user acco
+        unts, then this is vertical privilege escalation.
+
+        #Unprotected functionality
+        1.For example, administrative functions might be linked from an administrator's welcome page but not from a user's 
+          welcome page. However, a user might be able to access the administrative functions by browsing to the relevant admin
+          URL.
+        https://insecure-website.com/admin
+        https://insecure-website.com/robots.txt
+        https://insecure-website.com/administrator-panel
+
+        2.In some cases, sensitive functionality is concealed by giving it a less predictable URL. This is an example of 
+          so-called "security by obscurity"
+        https://insecure-website.com/administrator-panel-yb556  (This might be leaked in the javascript)
+
+        #Parameter-based access control methods
+        Some applications determine the user's access rights or role at login, and then store this information in a 
+        user-controllable location. This could be:
+
+                -A hidden field.
+                -A cookie.
+                -A preset query string parameter
+
+        1.The application makes access control decisions based on the submitted value. For example:
+        https://insecure-website.com/login/home.jsp?admin=true
+        https://insecure-website.com/login/home.jsp?role=1
+        *Go to cookies see if there is a Admin set to "false" ------> "true" *reload :)
+
+        #Horizontal privilege escalation
+        Horizontal privilege escalation occurs if a user is able to gain access to resources belonging to another user, 
+        instead of their own resources of that type
+
+        https://insecure-website.com/myaccount?id=123
+        *If an attacker modifies the id parameter value to that of another user, they might gain access to another user's 
+        account page, and the associated data and functions.
+
+        * Some times the application uses GUIDs globally unique identifiers for all the users (hard to predict)
+          these GUIDs of other users will be present somewhere inthe program (blog by a user)
+                https://insecure-website.com/my-account?id=3120cd38-1721-4af4-8df1-542837f22802
+                check the source code and find the GUID of other user and replace it with your own :)
+
+
+        #Horizontal to vertical privilege escalation
+        horizontal privilege escalation attack can be turned into a vertical privilege escalation, by compromising a more 
+        privileged user.
+        https://insecure-website.com/myaccount?id=456
+
+        User ID controlled by request parameter with password disclosure
+        go to /my-account?id=administrator
+        IF password is shown masked/hashed ************* go to the source code and see the value ="password1234"
+
+3. Authentication vulnerabilites
+        Authentication vulnerabilities can allow attackers to gain access to sensitive data and functionality. 
+        They also expose additional attack surface for further exploits
+
+        #Brute-force attacks
+        passwords and usernames can be bruteforced (CRACKED)
+
+        #Bypassing two-factor authentication
+        If the user is first prompted to enter a password, and then prompted to enter a verification code on a separate page,
+        the user is effectively in a "logged in" state before they have entered the verification code. In this case,
+        it is worth testing to see if you can directly skip to "logged-in only" pages after completing the first 
+        authentication step. Occasionally, you will find that a website doesn't actually check whether or not you 
+        completed the second step before loading the page.
+
+
+4. SSRF   ( Server-side Request Forgery )
+        Server-side request forgery is a web security vulnerability that allows an attacker to cause the server-side 
+        application to make requests to an unintended location. (outside or maybe inside within the infrastructure)
+        *http://localhost/admin
+        *http://192.168.0.68/admin
+
+        #SSRF attacks against the server
+        In an SSRF attack against the server, the attacker causes the application to make an HTTP request back to the 
+        server that is hosting the application, via its loopback network interface. This typically involves supplying a URL 
+        with a hostname like 127.0.0.1 / localhost
+
+        stockAPI=http://localhost/admin/delete?username=carlos
+
+        #SSRF attacks against other back-end systems
+        In some cases, the application server is able to interact with back-end systems that are not directly reachable by 
+        users. These systems often have non-routable private IP addresses. The back-end systems are normally protected by 
+        the network 
+        topology
+
+        stockAPI=http://192.168.0.206:8080/admin/delete?username=carlos
+5. File Upload vulns
+
+6. OS Command Injection
+        OS command injection is also known as shell injection. It allows an attacker to execute operating system (OS) 
+        commands on the server that is running an application
+
+        Purpose of command      Linux   Windows
+        Name of current user    whoami  whoami
+        Operating system        uname -a        ver
+        Network configuration   ifconfig        ipconfig /all
+        Network connections     netstat -an     netstat -an
+        Running processes       ps -ef  tasklist
+
+        #Injection OS Commands
+        case:
+        https://insecure-website.com/stockStatus?productID=381&storeID=29
+        stockreport.pl 381 29
+        stockreport.pl & echo aiwefwlguh & 29    #####VULN EXPLOIT#####
+        & whoami
+        1| whoami
+        |whoami
+        && whoami
+        ;whoami
+        stockID=1|whoami
+
+7. SQL Injection
