@@ -15,8 +15,34 @@ body{
 }
 
 .dark-mode {
-  background-color: #333;
-  color: #f0f0f0;
+    background-color: #343a40; /* Dark background color */
+    color: white; /* Light text color */
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode a,
+.dark-mode .card-title,
+.dark-mode .card-text,
+.dark-mode .headding,
+.dark-mode .quotee,
+.dark-mode .trashh,
+.dark-mode footer {
+    color: white; /* Light text color */
+}
+
+.dark-mode .bg-light {
+    background-color: #f8f9fa !important; /* Light background color */
+}
+
+.dark-mode .bg-white {
+    background-color: white !important; /* White background color */
+    color: black !important; /* Dark text color */
 }
 
 #quote{
